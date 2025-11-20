@@ -5,11 +5,11 @@ from .forms import VisitaForm
 from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
 
-from .serializers import GroupSerializer, UserSerializer, VisitaSerializer
+from .serializers import GroupSerializer, UserSerializer, VisitaSerializers
 
 class VisitaViewSet(viewsets.ModelViewSet):
     queryset = Visita.objects.all()
-    serializer_class = VisitaSerializer
+    serializer_class = VisitaSerializers
     permission_classes = [permissions.IsAuthenticated]
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -22,10 +22,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-
-
 
 
 def inicio(request):
