@@ -2,6 +2,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Visita
 from .forms import VisitaForm
 
+from django.contrib.auth.models import Group, User
+from rest_framework import permissions, viewsets
+
+from .serializers import GroupSerializer, UserSerializer, VisitaSerializer
+
+class VisitaViewSet(viewsets.ModelViewSet):
+    queryset = Visita.objects.all()
+    serializer_class = VisitaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by("-date_joined")
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all().order_by("name")
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 
 
 
