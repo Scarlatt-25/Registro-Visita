@@ -87,6 +87,32 @@ class ClienteAPI:
 
             print(f"- ID {visita_id}: {v['nombre']} | {v['rut']} | {v['motivo']} | {v['fecha_de_visita']}")
     
+    # ----------------------------------------------------
+    # 5. CREAR VISITAS
+    # ----------------------------------------------------
+    
+    def crear_visita(self):
+        print("\n📝 Crear nueva visita")
+        nombre = input("Nombre: ")
+        rut = input("RUT: ")
+        motivo = input("Motivo: ")
+        fecha = input("Fecha (YYYY-MM-DD): ")
+
+        data = {
+            "nombre": nombre,
+            "rut": rut,
+            "motivo": motivo,
+            "fecha_de_visita": fecha
+        }
+
+        r = self.request("POST", "/api/visitas/", json=data)
+
+        if r.status_code in (200, 201):
+            print("✅ Visita creada correctamente.")
+        else:
+            print("❌ Error al crear visita:", r.text)
+
+
 
 
     # ----------------------------------------------------
@@ -140,28 +166,31 @@ def menu():
 
     while True:
         print("""
-==============================
-     CLIENTE API VISITAS
-==============================
-1. Listar visitas
-2. Eliminar visita
-3. Monitorear en tiempo real
-4. Salir
-""")
+        ==============================
+             CLIENTE API VISITAS
+        ==============================
+        1. Listar visitas
+        2. Crear visita
+        3. Eliminar visita
+        4. Monitorear en tiempo real
+        5. Salir
+        """)
+
 
         opcion = input("Elige una opción: ")
 
         if opcion == "1":
             cliente.listar_visitas()
         elif opcion == "2":
-            cliente.eliminar_visita()
+            cliente.crear_visita()
         elif opcion == "3":
-            cliente.monitorear()
+            cliente.eliminar_visita()
         elif opcion == "4":
+            cliente.monitorear()
+        elif opcion == "5":
             print("👋 Adiós!")
             break
-        else:
-            print("❌ Opción inválida.")
+
 
 
 if __name__ == "__main__":
