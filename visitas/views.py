@@ -9,6 +9,7 @@ from .serializers import GroupSerializer, UserSerializer, VisitaSerializer
 class VisitaViewSet(viewsets.ModelViewSet):
     queryset = Visita.objects.all()
     serializer_class = VisitaSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserViewSet(viewsets.ModelViewSet):
