@@ -1,34 +1,41 @@
+import re
 from django.core.exceptions import ValidationError
 
-def validar_rut(valor):
-    valor = valor.replace(".", "").replace("-", "").upper()
+def validar_rut(value):
+    rut = value.upper().replace(".", "").replace("-", "")
 
-    if len(valor) < 8:
-        raise ValidationError("El RUT es muy corto.")
+    # Debe tener mínimo 2 caracteres (cuerpo + DV)
+    if len(rut) < 2:
+        raise ValidationError("RUT inválido.")
 
-    cuerpo = valor[:-1]
-    dv = valor[-1]
+    cuerpo = rut[:-1]
+    dv = rut[-1]
 
+    # El cuerpo debe ser solo números
     if not cuerpo.isdigit():
-        raise ValidationError("El RUT debe tener solo números en el cuerpo.")
+        raise ValidationError("RUT inválido.")
 
+    # El DV puede ser número o K
+    if not re.match(r'^[0-9K]$', dv):
+        raise ValidationError("RUT inválido.")
+
+    # Algoritmo de cálculo
     suma = 0
-    mul = 2
+    multiplo = 2
 
     for c in reversed(cuerpo):
-        suma += int(c) * mul
-        mul = 9 if mul == 7 else mul + 1
+        suma += int(c) * multiplo
+        multiplo = multiplo + 1 if multiplo < 7 else 2
 
-    res = 11 - (suma % 11)
+    resto = suma % 11
+    dv_calculado = 11 - resto
 
-    if res == 11:
-        digito = "0"
-    elif res == 10:
-        digito = "K"
+    if dv_calculado == 11:
+        dv_calculado = '0'
+    elif dv_calculado == 10:
+        dv_calculado = 'K'
     else:
-        digito = str(res)
+        dv_calculado = str(dv_calculado)
 
-    if dv != digito:
-        raise ValidationError("El RUT no es válido.")
-
-    return valor   # ← ❗ ESTO FALTABA
+    if dv != dv_calculado:
+        raise ValidationError("RUT incorrecto.")

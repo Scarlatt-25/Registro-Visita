@@ -1,16 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Visita
 from .forms import VisitaForm
-
 from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
+from .serializers import GroupSerializer, UserSerializer, VisitaSerializer
 
-from .serializers import GroupSerializer, UserSerializer, VisitaSerializers
 
 class VisitaViewSet(viewsets.ModelViewSet):
     queryset = Visita.objects.all()
-    serializer_class = VisitaSerializers
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = VisitaSerializer
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by("-date_joined")
@@ -28,21 +27,27 @@ def inicio(request):
     visitas = Visita.objects.all()
     return render(request, 'lista.html', {'visitas': visitas})
 
-# Lista de visitas
-def lista_visitas(request):
-    visitas = Visita.objects.all()
-    return render(request, 'lista.html', {'visitas': visitas})
 
-# Registrar visita
 def registrar_visita(request):
     if request.method == 'POST':
         form = VisitaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('lista_visitas')
+            return redirect('visitas_lista')  # lista bien hecha
     else:
         form = VisitaForm()
-    return render(request, 'registrar.html', {'form': form})
+
+    visitas = Visita.objects.all()  # para mostrar la tabla en registrar.html
+
+    return render(request, 'registrar.html', {
+        'form': form,
+        'visitas': visitas
+    })
+
+
+def lista_visitas(request):
+    visitas = Visita.objects.all()
+    return render(request, 'lista.html', {'visitas': visitas})
 
 # Editar visita
 def editar_visita(request, id):

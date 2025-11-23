@@ -17,5 +17,6 @@ urlpatterns = [
     path('registrar/', views.registrar_visita, name='visitas_registrar'),
     path('editar/<int:id>/', views.editar_visita, name='visitas_editar'),
     path('eliminar/<int:id>/', views.eliminar_visita, name='visitas_eliminar'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
-
