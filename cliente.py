@@ -11,9 +11,6 @@ class ClienteAPI:
         self.access = None
         self.refresh = None
 
-    # ----------------------------------------------------
-    # 1. OBTENER TOKEN
-    # ----------------------------------------------------
     def obtener_token(self):
         url = f"{BASE_URL}/api/token/"
         data = {"username": USERNAME, "password": PASSWORD}
@@ -30,9 +27,6 @@ class ClienteAPI:
             print("❌ Error al obtener token:", r.text)
             exit()
 
-    # ----------------------------------------------------
-    # 2. REFRESCAR TOKEN
-    # ----------------------------------------------------
     def refrescar_token(self):
         print("🔄 Token expirado. Intentando refrescar...")
         url = f"{BASE_URL}/api/token/refresh/"
@@ -46,9 +40,6 @@ class ClienteAPI:
             print("❌ No se pudo refrescar el token:", r.text)
             return False
 
-    # ----------------------------------------------------
-    # 3. REQUEST AUTOMÁTICA
-    # ----------------------------------------------------
     def request(self, method, endpoint, retry=True, **kwargs):
         headers = {"Authorization": f"Bearer {self.access}"}
         url = f"{BASE_URL}{endpoint}"
@@ -62,9 +53,6 @@ class ClienteAPI:
 
         return r
 
-    # ----------------------------------------------------
-    # 4. LISTAR VISITAS (ARREGLADO)
-    # ----------------------------------------------------
     def listar_visitas(self):
         print("\n📋 Listando visitas...")
 
@@ -74,22 +62,18 @@ class ClienteAPI:
             return
 
         data = resp.json()
-        visitas = data.get("results", [])  # paginación DRF
+        visitas = data.get("results", [])  
 
         if not visitas:
             print("⚠️ No hay visitas registradas.")
             return
 
         for v in visitas:
-            # obtener ID desde la URL
             url = v["url"]
             visita_id = url.rstrip("/").split("/")[-1]
 
             print(f"- ID {visita_id}: {v['nombre']} | {v['rut']} | {v['motivo']} | {v['fecha_de_visita']}")
     
-    # ----------------------------------------------------
-    # 5. CREAR VISITAS
-    # ----------------------------------------------------
     
     def crear_visita(self):
         print("\n📝 Crear nueva visita")
@@ -115,9 +99,6 @@ class ClienteAPI:
 
 
 
-    # ----------------------------------------------------
-    # 5. ELIMINAR VISITA
-    # ----------------------------------------------------
     def eliminar_visita(self):
         visit_id = input("ID de la visita a eliminar: ")
         r = self.request("DELETE", f"/api/visitas/{visit_id}/")
@@ -127,9 +108,6 @@ class ClienteAPI:
         else:
             print("❌ Error:", r.text)
 
-    # ----------------------------------------------------
-    # 6. MONITOREO EN TIEMPO REAL
-    # ----------------------------------------------------
     def monitorear(self):
         print("\n📡 Modo monitoreo activado.")
         print("Se consultará la API cada 10 segundos para mostrar nuevas visitas.\n")
@@ -157,9 +135,7 @@ class ClienteAPI:
             time.sleep(10)
 
 
-# ----------------------------------------------------
-# 7. MENÚ PRINCIPAL
-# ----------------------------------------------------
+
 def menu():
     cliente = ClienteAPI()
     cliente.obtener_token()
