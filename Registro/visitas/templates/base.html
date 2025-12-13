@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Registro de Visitas{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fdf6fb; /* rosa pastel muy claro */
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #f3d6f0; /* lila pastel */
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            color: #5c2a57;
+        }
+        nav {
+            background-color: #fbe9f5; /* rosa pastel */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: #5c2a57;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #e1bde6;
+        }
+        main {
+            padding: 20px;
+        }
+        footer {
+            background-color: #f3d6f0;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            color: #5c2a57;
+        }
+    </style>
+</head>
+<body>
+    <header>Registro de Visitas</header>
+    <nav>
+        <a href="{% url 'visitas_lista' %}">Lista</a>
+        <a href="{% url 'visitas_registrar' %}">Registrar</a>
+    </nav>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        &copy; 2025 Registro de Visitas
+    </footer>
+</body>
+</html>

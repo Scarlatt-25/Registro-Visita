@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Visitas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff0f5; /* Rosa pastel de fondo */
+            color: #333;
+        }
+        header {
+            background-color: #ffc0cb; /* Rosa pastel más fuerte */
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #8b0000; /* Rojo suave */
+            font-weight: bold;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #ffb6c1; /* Rosa pastel header */
+        }
+        tr:nth-child(even) { background-color: #fdf0f9; } /* Rosa muy suave */
+        tr:nth-child(odd) { background-color: #ffffff; }
+        a.btn-editar, a.btn-eliminar {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        a.btn-editar {
+            background-color: #ffb6c1;
+            color: #fff;
+        }
+        a.btn-eliminar {
+            background-color: #ff69b4;
+            color: #fff;
+        }
+        a.btn-editar:hover { background-color: #ff99aa; }
+        a.btn-eliminar:hover { background-color: #ff3399; }
+    </style>
+</head>
+<body>
+<header>Registro de Visitas</header>
+<nav>
+    <a href="{% url 'visitas_lista' %}">Inicio</a>
+    <a href="{% url 'visitas_lista' %}">Lista</a>
+    <a href="{% url 'visitas_registrar' %}">Registrar</a>
+</nav>
+<main>
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+        {% for visita in visitas %}
+        <tr>
+            <td>{{ visita.nombre }}</td>
+            <td>{{ visita.fecha }}</td>
+            <td>
+                <a class="btn-editar" href="{% url 'visitas_editar' visita.id %}">Editar</a>
+                <a class="btn-eliminar" href="{% url 'visitas_eliminar' visita.id %}">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" style="text-align:center;">No hay visitas registradas</td>
+        </tr>
+        {% endfor %}
+    </table>
+</main>
+</body>
+</html>

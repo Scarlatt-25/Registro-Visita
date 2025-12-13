@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Visita{% endblock %}
+{% block content %}
+<h2>Eliminar Visita</h2>
+<p>¿Estás segura que quieres eliminar la visita de <strong>{{ visita.nombre }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background-color:#f7b7c7; color:white; padding:8px 16px; border:none; border-radius:5px;">Eliminar</button>
+    <a href="{% url 'visitas_lista' %}" style="background-color:#a8d5ba; color:white; padding:8px 16px; border-radius:5px; text-decoration:none;">Cancelar</a>
+</form>
+{% endblock %}
