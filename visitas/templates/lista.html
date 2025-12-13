@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 style="text-align:center;">Lista de Visitas</h2>
+<h2 style="text-align:center;">Listado de Atenciones – Salón de Belleza</h2>
 
 <style>
     body {
@@ -68,17 +68,17 @@
 <div class="table-container">
     <table>
         <tr>
-            <th>Rut</th>
-            <th>Nombre</th>
-            <th>Motivo</th>
-            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Fecha de Atencion</th>
         </tr>
         {% for visita in visitas %}
         <tr>
-            <td>{{ visita.rut_formateado }}</td>
-            <td>{{ visita.nombre }}</td>
-            <td>{{ visita.motivo }}</td>
-            <td>{{ visita.fecha_de_visita }}</td>
+            <td>{{ visita.cliente }}</td>
+            <td>{{ visita.servicio }}</td>
+            <td>${{ visita.precio }}</td>
+            <td>{{ visita.fecha_visita }}</td>
             <td>
                 <a class="btn" href="{% url 'visitas_editar' visita.id %}">Editar</a>
                 <a class="btn btn-eliminar" href="{% url 'visitas_eliminar' visita.id %}">Eliminar</a>

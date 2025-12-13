@@ -5,15 +5,15 @@ from .models import Visita
 
 @admin.register(Visita)
 class VisitaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'rut', 'motivo', 'fecha_de_visita')
-    search_fields = ('nombre', 'rut')
-    list_filter = ('fecha_de_visita',)
-    ordering = ('nombre',)
+    list_display = ('cliente', 'rut', 'servicio', 'fecha_visita')
+    search_fields = ('cliente', 'rut')
+    list_filter = ('fecha_visita',)
+    ordering = ('cliente',)
     list_per_page = 25
     actions = ['marcar_salida']
 
-    @admin.action(description="Marcar nueva fecha de visita (actualizar fecha_de_visita = ahora) para las seleccionadas")
+    @admin.action(description="Marcar nueva fecha de visita (actualizar fecha_visita = ahora) para las seleccionadas")
     def marcar_salida(self, request, queryset):
-        pendientes = queryset.filter(fecha_de_visita__isnull=True)
-        updated = pendientes.update(fecha_de_visita=timezone.now())
+        pendientes = queryset.filter(fecha_visita__isnull=True)
+        updated = pendientes.update(fecha_visita=timezone.now())
         self.message_user(request, f"{updated} visita actualizadas con nueva fecha de visita.")

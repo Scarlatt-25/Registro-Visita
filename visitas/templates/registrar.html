@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Registrar Visita{% endblock %}
 {% block content %}
-<h2 style="text-align:center;">Registrar Nueva Visita</h2>
+<h2 style="text-align:center;">Registrar Atención - Salón de belleza 💅💇‍♀️</h2>
 
 <style>
     .form-container {
@@ -24,6 +24,7 @@
         border: 1px solid #ddd;
         font-size: 1em;
         font-family: 'Arial', sans-serif;
+        background-color: white;
     }
 
     textarea {
@@ -61,6 +62,7 @@
         display: flex;
         flex-direction: column;
         min-width: 150px;
+        position: relative;
     }
 
     .message {
@@ -73,27 +75,50 @@
     .message.error   { background-color: #f8d7da; color: #721c24; }
     .message.warning { background-color: #fff3cd; color: #856404; }
 
-    .visitas-list {
-        max-width: 600px;
-        margin: 30px auto 0;
+    /* Custom Select */
+    .custom-select {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-select select {
+        display: none; /* ocultamos el select nativo */
+    }
+
+    .select-selected {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 8px;
+        cursor: pointer;
         font-family: 'Arial', sans-serif;
     }
 
-    .visitas-list table {
-        width: 100%;
-        border-collapse: collapse;
+    .select-selected:hover {
+        border-color: #ff6f91;
+        background-color: #ffe0ee; /* rosa suave más fuerte al hover */
     }
 
-    .visitas-list th, .visitas-list td {
+    .select-items {
+        position: absolute;
+        background-color: white;
         border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
+        border-top: none;
+        z-index: 99;
+        width: 100%;
+        border-radius: 0 0 5px 5px;
+        display: none;
     }
 
-    .visitas-list th {
-        background-color: #5c2a57;
-        color: white;
+    .select-items div {
+        padding: 8px;
+        cursor: pointer;
     }
+
+    .select-items div:hover {
+        background-color: #ffb6d9; /* rosa más fuerte */
+    }
+
 </style>
 
 <div class="form-container">
@@ -107,54 +132,97 @@
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group">
-                <label>Nombre:</label>
-                {{ form.nombre }}
+                <label>Cliente:</label>
+                {{ form.cliente }}
             </div>
             <div class="form-group">
                 <label>RUT:</label>
                 {{ form.rut }}
             </div>
             <div class="form-group">
-                <label>Fecha:</label>
-                {{ form.fecha_de_visita }}
+                <label>Fecha de visita:</label>
+                {{ form.fecha_visita }}
             </div>
         </div>
 
         <div class="form-group">
-            <label>Motivo:</label>
-            {{ form.motivo }}
+            <label>Servicio:</label>
+            <div class="custom-select">
+                <select id="id_servicio" name="servicio">
+                    <option value="">-- Selecciona un servicio --</option>
+                    <option value="corte">Corte de cabello</option>
+                    <option value="tintura">Tintura</option>
+                    <option value="manicure">Manicure</option>
+                    <option value="pedicure">Pedicure</option>
+                    <option value="alisado">Alisado</option>
+                    <option value="peinado">Peinado</option>
+                    <option value="prefilado de cejas">Perfilado de cejas</option>
+                    <option value="lifting de pestañas">Lifting de pestañas</option>
+                </select>
+                <div class="select-selected">-- Selecciona un servicio --</div>
+                <div class="select-items">
+                    <div data-value="corte">Corte de cabello</div>
+                    <div data-value="tintura">Tintura</div>
+                    <div data-value="manicure">Manicure</div>
+                    <div data-value="pedicure">Pedicure</div>
+                    <div data-value="alisado">Alisado</div>
+                    <div data-value="peinado">Peinado</div>
+                    <div data-value="prefilado de cejas">Perfilado de cejas</div>
+                    <div data-value="lifting de pestañas">Lifting de pestañas</div>
+                </div>
+            </div>
         </div>
 
-        <button type="submit">Registrar</button>
+        <div class="form-group">
+            <label>Valor Servicio ($):</label>
+            <input type="number" id="id_precio" name="precio">
+        </div>
+
+        <button type="submit">Guardar</button>
     </form>
-</div>
 
-<div class="visitas-list">
-    <h3>Visitas Registradas</h3>
-    {% if visitas %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>RUT</th>
-                    <th>Fecha</th>
-                    <th>Motivo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for visita in visitas %}
-                <tr>
-                    <td>{{ visita.nombre }}</td>
-                    <td>{{ visita.rut }}</td>
-                    <td>{{ visita.fecha_de_visita }}</td>
-                    <td>{{ visita.motivo }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No hay visitas registradas.</p>
-    {% endif %}
-</div>
+    <script>
+    // Diccionario de precios
+    const precios = {
+        'corte': 15000,
+        'tintura': 25000,
+        'manicure': 12000,
+        'pedicure': 15000,
+        'alisado': 30000,
+        'peinado': 20000,
+        'prefilado de cejas': 10000,
+        'lifting de pestañas': 18000
+    };
 
+    const selectWrapper = document.querySelector(".custom-select");
+    const select = selectWrapper.querySelector("select");
+    const selected = selectWrapper.querySelector(".select-selected");
+    const items = selectWrapper.querySelector(".select-items");
+
+    // llenar precio automático
+    const precioInput = document.getElementById('id_precio');
+
+    // abrir/cerrar dropdown
+    selected.addEventListener("click", () => {
+        items.style.display = items.style.display === "block" ? "none" : "block";
+    });
+
+    // seleccionar opción
+    items.querySelectorAll("div").forEach(option => {
+        option.addEventListener("click", () => {
+            select.value = option.dataset.value;
+            selected.textContent = option.textContent;
+            precioInput.value = precios[option.dataset.value] || '';
+            items.style.display = "none";
+        });
+    });
+
+    // cerrar dropdown si clic fuera
+    document.addEventListener("click", e => {
+        if (!selectWrapper.contains(e.target)) {
+            items.style.display = "none";
+        }
+    });
+    </script>
+</div>
 {% endblock %}

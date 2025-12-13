@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Editar Visita{% endblock %}
 {% block content %}
-<h2 style="text-align:center;">Editar Visita</h2>
+<h2 style="text-align:center;">Editar Atención</h2>
 
 <style>
     .form-container {
@@ -77,14 +77,20 @@
             </div>
             <div class="form-group">
                 <label>Fecha:</label>
-                {{ form.fecha_de_visita }}
+                {{ form.fecha_visita }}
             </div>
         </div>
 
         <div class="form-group">
-            <label>Motivo:</label>
-            {{ form.motivo }}
+            <label>Servicio Realizado:</label>
+            {{ form.servicio }}
         </div>
+
+        <div class="form-group">
+            <label>Precio del servicio ($):</label>
+            {{ form.precio }}
+        </div>
+
 
         <button type="submit">Actualizar</button>
     </form>

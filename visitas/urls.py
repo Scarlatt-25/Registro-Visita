@@ -19,4 +19,6 @@ urlpatterns = [
     path('eliminar/<int:id>/', views.eliminar_visita, name='visitas_eliminar'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('ia/analizar/<int:id>/', views.analizar_visita, name='analizar_visita'),
+
 ]

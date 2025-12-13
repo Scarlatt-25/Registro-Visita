@@ -5,5 +5,5 @@ python-dotenv
 psycopg2
 djangorestframework
 djangorestframework-simplejwt
-
+openai
 whitenoise

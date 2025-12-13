@@ -4,7 +4,8 @@ from .forms import VisitaForm
 from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer, VisitaSerializer
-
+from .ai import analizar_visita_con_ia
+from django.http import JsonResponse
 
 class VisitaViewSet(viewsets.ModelViewSet):
     queryset = Visita.objects.all()
@@ -67,3 +68,17 @@ def eliminar_visita(request, id):
     visita = get_object_or_404(Visita, id=id)
     visita.delete()
     return redirect('lista_visitas')
+
+def analizar_visita(request, id):
+    try:
+        visita = Visita.objects.get(id=id)
+    except Visita.DoesNotExist:
+        return JsonResponse({"error": "La visita no existe"}, status=404)
+
+    resumen = analizar_visita_con_ia(
+        visita.cliente,
+        visita.rut,
+        visita.servicio
+    )
+
+    return JsonResponse({"resumen": resumen})
