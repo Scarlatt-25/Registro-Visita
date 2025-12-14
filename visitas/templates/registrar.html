@@ -1,228 +1,199 @@
 {% extends 'base.html' %}
 {% block title %}Registrar Visita{% endblock %}
+
 {% block content %}
-<h2 style="text-align:center;">Registrar Atención - Salón de belleza 💅💇‍♀️</h2>
+<h2 style="text-align:center;">Registrar Atención - Salón de Belleza 💅</h2>
 
 <style>
+    /* Estilos del Formulario Principal */
     .form-container {
-        max-width: 600px;
-        margin: 0 auto;
+        max-width: 700px;
+        margin: auto;
         padding: 20px;
-        font-family: 'Arial', sans-serif;
+        font-family: Arial, sans-serif;
     }
-
-    label {
-        font-weight: bold;
-        color: #5c2a57;
-        margin-bottom: 5px;
+    label { font-weight: bold; color: #5c2a57; }
+    input, select, textarea { 
+        width: 100%; padding: 10px; margin-top: 5px; 
+        margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc;
     }
-
-    input, textarea {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        font-size: 1em;
-        font-family: 'Arial', sans-serif;
-        background-color: white;
-    }
-
-    textarea {
-        font-family: 'Courier New', monospace;
-        line-height: 1.4;
-        margin-bottom: 15px;
-    }
-
     button {
-        width: 100%;
-        padding: 10px;
-        background-color: #ff6f91;
-        color: white;
-        font-size: 1em;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: background 0.3s;
+        padding: 12px; background-color: #ff6f91; color: white; border: none; 
+        border-radius: 6px; font-size: 1em; cursor: pointer;
+    }
+    button:hover { background-color: #ff3f6c; }
+
+    /* --- ESTILOS PARA EL CHAT FLUIDO --- */
+
+    #chatBubble {
+        position: fixed; bottom: 30px; right: 30px; background-color: #ff6f91; 
+        color: white; width: 60px; height: 60px; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; 
+        font-size: 30px; cursor: pointer; z-index: 999; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
-    button:hover {
-        background-color: #ff3f6c;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
-    .form-group {
-        flex: 1;
-        display: flex;
+    #chatContainer {
+        display: none; position: fixed; bottom: 100px; right: 30px; 
+        width: 320px; max-width: 90%; height: 400px; background: white; 
+        border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
+        z-index: 1000; font-family: Arial, sans-serif; display: flex; 
         flex-direction: column;
-        min-width: 150px;
-        position: relative;
+    }
+
+    #chatHeader {
+        background-color: #ff6f91; color: white; padding: 10px 15px;
+        border-radius: 12px 12px 0 0; cursor: pointer; font-weight: bold;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    #chatHeader h4 { margin: 0; }
+    #chatHeader .close { font-size: 1.5em; line-height: 1; cursor: pointer; }
+
+    #chatBody {
+        flex-grow: 1; overflow-y: auto; padding: 10px; background-color: #f7f7f7;
+        display: flex; flex-direction: column;
     }
 
     .message {
-        margin-bottom: 15px;
-        padding: 10px;
-        border-radius: 5px;
+        max-width: 80%; padding: 8px 12px; border-radius: 18px; 
+        margin-bottom: 10px; line-height: 1.4; font-size: 0.9em;
     }
 
-    .message.success { background-color: #d4edda; color: #155724; }
-    .message.error   { background-color: #f8d7da; color: #721c24; }
-    .message.warning { background-color: #fff3cd; color: #856404; }
-
-    /* Custom Select */
-    .custom-select {
-        position: relative;
-        width: 100%;
+    .ia-message {
+        align-self: flex-start; background-color: #e2e2e2; color: #333;
+        border-bottom-left-radius: 2px;
     }
 
-    .custom-select select {
-        display: none; /* ocultamos el select nativo */
+    .user-message {
+        align-self: flex-end; background-color: #ff6f91; color: white;
+        border-bottom-right-radius: 2px;
     }
 
-    .select-selected {
+    #chatInputArea {
+        padding: 10px; border-top: 1px solid #ddd; display: flex;
         background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 8px;
-        cursor: pointer;
-        font-family: 'Arial', sans-serif;
     }
 
-    .select-selected:hover {
-        border-color: #ff6f91;
-        background-color: #ffe0ee; /* rosa suave más fuerte al hover */
+    #chatInputArea input[type="text"] {
+        flex-grow: 1; margin: 0 5px 0 0; border-radius: 20px; 
+        padding: 8px 15px; border: 1px solid #ccc; box-shadow: none;
     }
 
-    .select-items {
-        position: absolute;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-top: none;
-        z-index: 99;
-        width: 100%;
-        border-radius: 0 0 5px 5px;
-        display: none;
+    #chatInputArea button {
+        width: auto; padding: 8px 15px; margin: 0; border-radius: 20px;
     }
-
-    .select-items div {
-        padding: 8px;
-        cursor: pointer;
-    }
-
-    .select-items div:hover {
-        background-color: #ffb6d9; /* rosa más fuerte */
-    }
-
 </style>
 
 <div class="form-container">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-
     <form method="post">
         {% csrf_token %}
-        <div class="form-row">
-            <div class="form-group">
-                <label>Cliente:</label>
-                {{ form.cliente }}
-            </div>
-            <div class="form-group">
-                <label>RUT:</label>
-                {{ form.rut }}
-            </div>
-            <div class="form-group">
-                <label>Fecha de visita:</label>
-                {{ form.fecha_visita }}
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Servicio:</label>
-            <div class="custom-select">
-                <select id="id_servicio" name="servicio">
-                    <option value="">-- Selecciona un servicio --</option>
-                    <option value="corte">Corte de cabello</option>
-                    <option value="tintura">Tintura</option>
-                    <option value="manicure">Manicure</option>
-                    <option value="pedicure">Pedicure</option>
-                    <option value="alisado">Alisado</option>
-                    <option value="peinado">Peinado</option>
-                    <option value="prefilado de cejas">Perfilado de cejas</option>
-                    <option value="lifting de pestañas">Lifting de pestañas</option>
-                </select>
-                <div class="select-selected">-- Selecciona un servicio --</div>
-                <div class="select-items">
-                    <div data-value="corte">Corte de cabello</div>
-                    <div data-value="tintura">Tintura</div>
-                    <div data-value="manicure">Manicure</div>
-                    <div data-value="pedicure">Pedicure</div>
-                    <div data-value="alisado">Alisado</div>
-                    <div data-value="peinado">Peinado</div>
-                    <div data-value="prefilado de cejas">Perfilado de cejas</div>
-                    <div data-value="lifting de pestañas">Lifting de pestañas</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Valor Servicio ($):</label>
-            <input type="number" id="id_precio" name="precio">
-        </div>
-
-        <button type="submit">Guardar</button>
+        <label>Cliente</label>
+        {{ form.cliente }}
+        <label>RUT</label>
+        {{ form.rut }}
+        <label>Fecha de visita</label>
+        {{ form.fecha_visita }}
+        <label>Servicio</label>
+        <select id="id_servicio" name="servicio">
+            <option value="">Seleccione un servicio</option>
+            <option value="Corte de cabello">Corte de cabello</option>
+            <option value="Tintura">Tintura</option>
+            <option value="Manicure">Manicure</option>
+            <option value="Pedicure">Pedicure</option>
+            <option value="Alisado">Alisado</option>
+            <option value="Peinado">Peinado</option>
+        </select>
+        <label>Precio ($)</label>
+        <input type="number" name="precio" id="id_precio">
+        <button type="submit">Guardar Atención</button>
     </form>
-
-    <script>
-    // Diccionario de precios
-    const precios = {
-        'corte': 15000,
-        'tintura': 25000,
-        'manicure': 12000,
-        'pedicure': 15000,
-        'alisado': 30000,
-        'peinado': 20000,
-        'prefilado de cejas': 10000,
-        'lifting de pestañas': 18000
-    };
-
-    const selectWrapper = document.querySelector(".custom-select");
-    const select = selectWrapper.querySelector("select");
-    const selected = selectWrapper.querySelector(".select-selected");
-    const items = selectWrapper.querySelector(".select-items");
-
-    // llenar precio automático
-    const precioInput = document.getElementById('id_precio');
-
-    // abrir/cerrar dropdown
-    selected.addEventListener("click", () => {
-        items.style.display = items.style.display === "block" ? "none" : "block";
-    });
-
-    // seleccionar opción
-    items.querySelectorAll("div").forEach(option => {
-        option.addEventListener("click", () => {
-            select.value = option.dataset.value;
-            selected.textContent = option.textContent;
-            precioInput.value = precios[option.dataset.value] || '';
-            items.style.display = "none";
-        });
-    });
-
-    // cerrar dropdown si clic fuera
-    document.addEventListener("click", e => {
-        if (!selectWrapper.contains(e.target)) {
-            items.style.display = "none";
-        }
-    });
-    </script>
 </div>
+
+<div id="chatBubble" onclick="abrirModal()">💬</div>
+
+<div id="chatContainer">
+    <div id="chatHeader" onclick="cerrarModal()">
+        <h4>Asistente IA 💖</h4>
+        <span class="close" >&times;</span>
+    </div>
+    
+    <div id="chatBody">
+        <div class="message ia-message">
+            Hola, soy tu asistente de belleza. Pregúntame sobre cualquier servicio o estado del cabello.
+        </div>
+    </div>
+
+    <div id="chatInputArea">
+        <input type="text" id="preguntaIA" placeholder="Escribe tu consulta..." 
+               onkeypress="if(event.key === 'Enter') consultarIA()">
+        <button type="button" onclick="consultarIA()">Enviar</button>
+    </div>
+</div>
+
+<script>
+function abrirModal() {
+    document.getElementById("chatContainer").style.display = "flex";
+}
+
+function cerrarModal() {
+    document.getElementById("chatContainer").style.display = "none";
+}
+
+function addMessage(text, sender) {
+    const chatBody = document.getElementById("chatBody");
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender === 'user' ? "user-message" : "ia-message");
+    messageDiv.innerHTML = text;
+    chatBody.appendChild(messageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function consultarIA() {
+    const inputField = document.getElementById("preguntaIA");
+    // Usamos .value.trim() para limpiar espacios antes de enviar
+    const pregunta = inputField.value.trim(); 
+
+    if (!pregunta) {
+        return; 
+    }
+
+    // 1. Mostrar mensaje del usuario y limpiar input
+    addMessage(pregunta, 'user');
+    inputField.value = ""; 
+    
+    // 2. Agregar placeholder de "Pensando..."
+    const thinkingMessage = document.createElement("div");
+    thinkingMessage.classList.add("message", "ia-message");
+    thinkingMessage.id = "thinking-message"; 
+    thinkingMessage.innerHTML = "Pensando... 💭";
+    document.getElementById("chatBody").appendChild(thinkingMessage);
+    document.getElementById("chatBody").scrollTop = document.getElementById("chatBody").scrollHeight;
+
+    // 3. Llamada a la API
+    fetch("/api/sugerir-servicio/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}" 
+        },
+        body: "pregunta=" + encodeURIComponent(pregunta)
+    })
+    .then(res => res.json())
+    .then(data => {
+        // 4. Eliminar "Pensando..."
+        const thinkingDiv = document.getElementById("thinking-message");
+        if(thinkingDiv) thinkingDiv.remove();
+        
+        // 5. Agregar respuesta de la IA
+        addMessage(data.respuesta, 'ia');
+    })
+    .catch(error => {
+        const thinkingDiv = document.getElementById("thinking-message");
+        if(thinkingDiv) thinkingDiv.remove();
+        addMessage("Error al consultar la IA 😢. Revisa la consola.", 'ia');
+        console.error(error);
+    });
+}
+</script>
+
 {% endblock %}

@@ -1,4 +1,4 @@
-from django.urls import path , include
+from django.urls import path, include
 from . import views
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -7,7 +7,6 @@ router = routers.DefaultRouter()
 router.register(r"users", views.UserViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"visitas", views.VisitaViewSet)
-
 
 urlpatterns = [
     path("api/", include(router.urls)),
@@ -19,6 +18,5 @@ urlpatterns = [
     path('eliminar/<int:id>/', views.eliminar_visita, name='visitas_eliminar'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('ia/analizar/<int:id>/', views.analizar_visita, name='analizar_visita'),
-
+    path('api/sugerir-servicio/', views.sugerir_servicio, name='sugerir_servicio'),
 ]
