@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Registrar Visita{% endblock %}
-
 {% block content %}
+
 <h2 style="text-align:center;">Registrar Atención - Salón de Belleza 💅</h2>
 
 <style>
-    /* Estilos del Formulario Principal */
     .form-container {
         max-width: 700px;
         margin: auto;
@@ -23,8 +21,7 @@
     }
     button:hover { background-color: #ff3f6c; }
 
-    /* --- ESTILOS PARA EL CHAT FLUIDO --- */
-
+    /* --- CHAT --- */
     #chatBubble {
         position: fixed; bottom: 30px; right: 30px; background-color: #ff6f91; 
         color: white; width: 60px; height: 60px; border-radius: 50%; 
@@ -32,166 +29,149 @@
         font-size: 30px; cursor: pointer; z-index: 999; 
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
-
     #chatContainer {
         display: none; position: fixed; bottom: 100px; right: 30px; 
-        width: 320px; max-width: 90%; height: 400px; background: white; 
+        width: 320px; height: 400px; background: white; 
         border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
-        z-index: 1000; font-family: Arial, sans-serif; display: flex; 
+        z-index: 1000; font-family: Arial, sans-serif;
         flex-direction: column;
     }
-
     #chatHeader {
-        background-color: #ff6f91; color: white; padding: 10px 15px;
-        border-radius: 12px 12px 0 0; cursor: pointer; font-weight: bold;
-        display: flex; justify-content: space-between; align-items: center;
+        background-color: #ff6f91; color: white; padding: 10px;
+        border-radius: 12px 12px 0 0; cursor: pointer;
+        display: flex; justify-content: space-between;
     }
-    #chatHeader h4 { margin: 0; }
-    #chatHeader .close { font-size: 1.5em; line-height: 1; cursor: pointer; }
-
     #chatBody {
-        flex-grow: 1; overflow-y: auto; padding: 10px; background-color: #f7f7f7;
-        display: flex; flex-direction: column;
+        flex-grow: 1; overflow-y: auto; padding: 10px;
+        background-color: #f7f7f7;
     }
-
     .message {
         max-width: 80%; padding: 8px 12px; border-radius: 18px; 
-        margin-bottom: 10px; line-height: 1.4; font-size: 0.9em;
+        margin-bottom: 10px; font-size: 0.9em;
     }
-
     .ia-message {
-        align-self: flex-start; background-color: #e2e2e2; color: #333;
-        border-bottom-left-radius: 2px;
+        background-color: #e2e2e2;
     }
-
     .user-message {
-        align-self: flex-end; background-color: #ff6f91; color: white;
-        border-bottom-right-radius: 2px;
+        background-color: #ff6f91; color: white; margin-left: auto;
     }
-
     #chatInputArea {
         padding: 10px; border-top: 1px solid #ddd; display: flex;
-        background-color: white;
     }
-
-    #chatInputArea input[type="text"] {
-        flex-grow: 1; margin: 0 5px 0 0; border-radius: 20px; 
-        padding: 8px 15px; border: 1px solid #ccc; box-shadow: none;
+    #chatInputArea input {
+        flex-grow: 1; border-radius: 20px; padding: 8px;
     }
-
     #chatInputArea button {
-        width: auto; padding: 8px 15px; margin: 0; border-radius: 20px;
+        margin-left: 5px;
     }
 </style>
 
 <div class="form-container">
+
+    {% if form.errors %}
+    <div style="color:red;">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
+
         <label>Cliente</label>
         {{ form.cliente }}
+
         <label>RUT</label>
         {{ form.rut }}
+
         <label>Fecha de visita</label>
         {{ form.fecha_visita }}
+
         <label>Servicio</label>
-        <select id="id_servicio" name="servicio">
-            <option value="">Seleccione un servicio</option>
-            <option value="Corte de cabello">Corte de cabello</option>
-            <option value="Tintura">Tintura</option>
-            <option value="Manicure">Manicure</option>
-            <option value="Pedicure">Pedicure</option>
-            <option value="Alisado">Alisado</option>
-            <option value="Peinado">Peinado</option>
-        </select>
+        {{ form.servicio }}
+
         <label>Precio ($)</label>
-        <input type="number" name="precio" id="id_precio">
+        {{ form.precio }}
+
         <button type="submit">Guardar Atención</button>
     </form>
 </div>
 
-<div id="chatBubble" onclick="abrirModal()">💬</div>
+<!-- CHAT -->
+<div id="chatBubble" onclick="abrirChat()">💬</div>
 
 <div id="chatContainer">
-    <div id="chatHeader" onclick="cerrarModal()">
-        <h4>Asistente IA 💖</h4>
-        <span class="close" >&times;</span>
+    <div id="chatHeader" onclick="cerrarChat()">
+        <strong>Asistente IA 💖</strong>
+        <span>&times;</span>
     </div>
-    
     <div id="chatBody">
         <div class="message ia-message">
-            Hola, soy tu asistente de belleza. Pregúntame sobre cualquier servicio o estado del cabello.
+            Hola 💅 ¿en qué te ayudo hoy?
         </div>
     </div>
-
     <div id="chatInputArea">
-        <input type="text" id="preguntaIA" placeholder="Escribe tu consulta..." 
-               onkeypress="if(event.key === 'Enter') consultarIA()">
+        <input type="text" id="preguntaIA" placeholder="Pregunta algo...">
         <button type="button" onclick="consultarIA()">Enviar</button>
     </div>
 </div>
 
 <script>
-function abrirModal() {
-    document.getElementById("chatContainer").style.display = "flex";
-}
+document.addEventListener('DOMContentLoaded', function () {
 
-function cerrarModal() {
-    document.getElementById("chatContainer").style.display = "none";
-}
-
-function addMessage(text, sender) {
-    const chatBody = document.getElementById("chatBody");
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", sender === 'user' ? "user-message" : "ia-message");
-    messageDiv.innerHTML = text;
-    chatBody.appendChild(messageDiv);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function consultarIA() {
-    const inputField = document.getElementById("preguntaIA");
-    // Usamos .value.trim() para limpiar espacios antes de enviar
-    const pregunta = inputField.value.trim(); 
-
-    if (!pregunta) {
-        return; 
+    // Fecha automática
+    const fecha = document.getElementById("id_fecha_visita");
+    if (fecha) {
+        fecha.value = new Date().toISOString().split("T")[0];
     }
 
-    // 1. Mostrar mensaje del usuario y limpiar input
-    addMessage(pregunta, 'user');
-    inputField.value = ""; 
-    
-    // 2. Agregar placeholder de "Pensando..."
-    const thinkingMessage = document.createElement("div");
-    thinkingMessage.classList.add("message", "ia-message");
-    thinkingMessage.id = "thinking-message"; 
-    thinkingMessage.innerHTML = "Pensando... 💭";
-    document.getElementById("chatBody").appendChild(thinkingMessage);
-    document.getElementById("chatBody").scrollTop = document.getElementById("chatBody").scrollHeight;
+    // Precio automático
+    const precios = {
+        corte: 15000,
+        tintura: 45000,
+        manicure: 8000,
+        pedicure: 12000,
+        alisado: 60000,
+        peinado: 20000,
+        "perfilado de cejas": 5000,
+        "lifting de pestañas": 18000
+    };
 
-    // 3. Llamada a la API
+    const servicio = document.getElementById("id_servicio");
+    const precio = document.getElementById("id_precio");
+
+    servicio.addEventListener("change", function () {
+        precio.value = precios[this.value] || "";
+    });
+});
+
+// CHAT
+function abrirChat() {
+    document.getElementById("chatContainer").style.display = "flex";
+}
+function cerrarChat() {
+    document.getElementById("chatContainer").style.display = "none";
+}
+function consultarIA() {
+    const input = document.getElementById("preguntaIA");
+    const pregunta = input.value.trim();
+    if (!pregunta) return;
+
+    const chatBody = document.getElementById("chatBody");
+    chatBody.innerHTML += `<div class="message user-message">${pregunta}</div>`;
+    input.value = "";
+
     fetch("/api/sugerir-servicio/", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": "{{ csrf_token }}" 
+            "X-CSRFToken": "{{ csrf_token }}"
         },
         body: "pregunta=" + encodeURIComponent(pregunta)
     })
     .then(res => res.json())
     .then(data => {
-        // 4. Eliminar "Pensando..."
-        const thinkingDiv = document.getElementById("thinking-message");
-        if(thinkingDiv) thinkingDiv.remove();
-        
-        // 5. Agregar respuesta de la IA
-        addMessage(data.respuesta, 'ia');
-    })
-    .catch(error => {
-        const thinkingDiv = document.getElementById("thinking-message");
-        if(thinkingDiv) thinkingDiv.remove();
-        addMessage("Error al consultar la IA 😢. Revisa la consola.", 'ia');
-        console.error(error);
+        chatBody.innerHTML += `<div class="message ia-message">${data.respuesta}</div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
     });
 }
 </script>

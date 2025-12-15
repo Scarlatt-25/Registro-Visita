@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from .validators import validar_rut
 
 class Visita(models.Model):
@@ -10,7 +9,7 @@ class Visita(models.Model):
         ('pedicure', 'Pedicure'),
         ('alisado', 'Alisado'),
         ('peinado', 'Peinado'),
-        ('prefilado de cejas', 'Perfilado de cejas'),
+        ('perfilado de cejas', 'Perfilado de cejas'),
         ('lifting de pestañas', 'Lifting de pestañas'),
     ]
 
@@ -21,4 +20,4 @@ class Visita(models.Model):
     fecha_visita = models.DateField()
 
     def __str__(self):
-        return f"{self.cliente} - {self.servicio} (${self.precio})"
+        return f"{self.cliente} - {self.servicio}"
